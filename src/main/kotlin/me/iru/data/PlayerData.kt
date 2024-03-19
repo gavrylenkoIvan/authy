@@ -3,14 +3,12 @@ package me.iru.data
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import me.iru.Authy
+import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import okhttp3.Response
 import okio.IOException
 import org.bukkit.entity.Player
+import java.io.File
 import java.util.*
 import kotlin.collections.HashSet
 
@@ -18,23 +16,25 @@ const val apiKeyHeader = "X-Api-Key"
 
 class PlayerData {
     val authy = Authy.instance
-    private val gson: Gson
-    private val httpClient: OkHttpClient
-    private val baseUrl: String
-    private val apiKey: String
 
+    private val cacheSize: Long = 10  * 1024 * 1024
+    private val cacheDir = File(authy.dataFolder, "http/cache" + File.separator)
+    private val cache = Cache(cacheDir, cacheSize)
+
+    private val baseUrl = "${authy.config.getString("block.url")!!}/api"
+    private val apiKey = authy.config.getString("block.api_key")!!
     private val mediaType = "application/json; charset=utf-8".toMediaType()
 
-    init {
-        baseUrl = "${authy.config.getString("block.url")!!}/api"
-        apiKey = authy.config.getString("block.api_key")!!
-        gson = Gson()
-        httpClient = OkHttpClient()
-    }
+    private val gson = Gson()
+    private val httpClient = OkHttpClient.Builder()
+        .addInterceptor(
+            HeaderInterceptor("Content-Type", "application/json; charset=utf-8")
+        ).addInterceptor(
+            HeaderInterceptor(apiKeyHeader, apiKey)
+        ).cache(cache).build()
 
     fun getAll(): HashSet<AuthyPlayer> {
         val request = Request.Builder()
-            .addHeader(apiKeyHeader, apiKey)
             .url("$baseUrl/user")
             .get().build()
 
@@ -56,7 +56,6 @@ class PlayerData {
         )
 
         val request = Request.Builder()
-            .addHeader(apiKeyHeader, apiKey)
             .url("$baseUrl/user").post(
                 toJson(authyPlayer)
             ).build()
@@ -69,7 +68,6 @@ class PlayerData {
     fun delete(uuid: UUID): Boolean {
         val request = Request.Builder()
             .url("$baseUrl/user/$uuid")
-            .addHeader(apiKeyHeader, apiKey)
             .delete().build()
 
         httpClient.newCall(request).execute().use { response ->
@@ -80,7 +78,6 @@ class PlayerData {
     fun get(uuid: UUID): AuthyPlayer? {
         val request = Request.Builder()
             .url("$baseUrl/user?uuid=$uuid")
-            .addHeader(apiKeyHeader, apiKey)
             .get().build()
 
         httpClient.newCall(request).execute().use { response ->
@@ -93,7 +90,6 @@ class PlayerData {
     fun get(username: String): AuthyPlayer? {
         val request = Request.Builder()
             .url("$baseUrl/user?username=$username")
-            .addHeader(apiKeyHeader, apiKey)
             .get().build()
 
         httpClient.newCall(request).execute().use { response ->
@@ -106,7 +102,6 @@ class PlayerData {
     fun update(d: AuthyPlayer) {
         val request = Request.Builder()
             .url("$baseUrl/user")
-            .addHeader(apiKeyHeader, apiKey)
             .patch(toJson(d)).build()
 
         httpClient.newCall(request).execute().use { response ->
@@ -118,7 +113,7 @@ class PlayerData {
         return get(uuid) != null
     }
 
-    fun construct(response: Response): AuthyPlayer {
+    private fun construct(response: Response): AuthyPlayer {
         return gson.fromJson(response.body?.string(), AuthyPlayer::class.java)
     }
 

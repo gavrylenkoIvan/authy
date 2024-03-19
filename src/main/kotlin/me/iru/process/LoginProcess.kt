@@ -2,6 +2,7 @@ package me.iru.process
 
 import me.iru.Authy
 import me.iru.PrefixType
+import me.iru.data.AuthyPlayer
 import me.iru.utils.sendVersionDownload
 import me.iru.utils.sendWelcomeMessage
 import org.bukkit.entity.Player
@@ -39,12 +40,12 @@ class LoginProcess {
         return inProcess.contains(e.uniqueId)
     }
 
-    fun sendPleaseAuthMessage(p: Player) {
-        if(playerData.exists(p.uniqueId)) {
+    fun sendPleaseAuthMessage(p: Player, user: AuthyPlayer?) {
+        if(user != null) {
             p.sendMessage(
                 "${translations.getPrefix(PrefixType.WARNING)} ${
                     translations.get("loginprocess_reminder_login").format(
-                        if (playerData.get(p.uniqueId)!!.isPinEnabled) translations.get("loginprocess_reminder_pin") else ""
+                        if (user.isPinEnabled) translations.get("loginprocess_reminder_pin") else ""
                     )
                 }"
             )

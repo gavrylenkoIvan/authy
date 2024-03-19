@@ -12,10 +12,11 @@ class LoginEvents : Listener {
 
     val loginProcess = Authy.loginProcess
     val authy = Authy.instance
+    val playerData = Authy.playerData
 
     @EventHandler(priority = EventPriority.LOWEST)
     fun onJoin(e : PlayerJoinEvent) {
-        JoinProcess(e.player).run()
+        JoinProcess(e.player, playerData.get(e.player.uniqueId)).run()
     }
 
     @EventHandler(priority = EventPriority.LOWEST)

@@ -75,7 +75,7 @@ class Authy : JavaPlugin() {
 
         val players = server.onlinePlayers
         for(player : Player in players) {
-            JoinProcess(player).run()
+            JoinProcess(player, playerData.get(player.uniqueId)).run()
         }
 
         this.server.scheduler.runTaskAsynchronously(this, Runnable {

@@ -18,6 +18,7 @@ import org.bukkit.event.player.*
 
 class BlockEvents : Listener {
     val loginProcess = Authy.loginProcess
+    val playerData = Authy.playerData
 
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onMove(e : PlayerMoveEvent) {
@@ -132,7 +133,7 @@ class BlockEvents : Listener {
         if(loginProcess.contains(e.player)) {
             if (!allowedCommands.contains(e.message.split(" ")[0])) {
                 e.isCancelled = true
-                loginProcess.sendPleaseAuthMessage(e.player)
+                loginProcess.sendPleaseAuthMessage(e.player, playerData.get(e.player.uniqueId))
             }
         }
     }
@@ -141,7 +142,7 @@ class BlockEvents : Listener {
     fun onChat(e : AsyncPlayerChatEvent)  {
         if(loginProcess.contains(e.player)) {
             e.isCancelled = true
-            loginProcess.sendPleaseAuthMessage(e.player)
+            loginProcess.sendPleaseAuthMessage(e.player, playerData.get(e.player.uniqueId))
         }
     }
 

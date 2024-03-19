@@ -23,7 +23,8 @@ class cChangePassword(override var name: String = "changepassword") : ICommand {
                 return true
             }
 
-            if(!PasswordValidation.check(p.uniqueId, args[0])) {
+            var user = playerData.get(p.uniqueId)!!
+            if(!PasswordValidation.check(args[0], user.password)) {
                 p.sendMessage("${translations.getPrefix(PrefixType.ERROR)} ${translations.get("command_login_wrongpassword")}")
                 return true
             }

@@ -2,6 +2,7 @@ package me.iru.process
 
 import me.iru.Authy
 import me.iru.PrefixType
+import me.iru.data.AuthyPlayer
 import me.iru.data.migrations.Migration
 import me.iru.utils.hasValidName
 import org.bukkit.Location
@@ -12,7 +13,7 @@ import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import org.bukkit.scheduler.BukkitTask
 
-class JoinProcess(private val player: Player) {
+class JoinProcess(private val player: Player, private val authyPlayer: AuthyPlayer?) {
 
     private val authy = Authy.instance
     private val loginProcess = Authy.loginProcess
@@ -27,7 +28,7 @@ class JoinProcess(private val player: Player) {
 
         PreLoginDataStore.save(player)
 
-        if(session.tryAutoLogin(player)) return
+        if(session.tryAutoLogin(player, authyPlayer)) return
 
         joinTeleports()
         teleportToValidPlace()
@@ -80,10 +81,10 @@ class JoinProcess(private val player: Player) {
         lateinit var messageTask : BukkitTask
         messageTask = authy.server.scheduler.runTaskTimer(authy, Runnable {
             if(loginProcess.contains(player)) {
-                loginProcess.sendPleaseAuthMessage(player)
+                loginProcess.sendPleaseAuthMessage(player, authyPlayer)
             }
             else messageTask.cancel()
-        },0L, 200L)
+        }, 0L, 8000L)
 
         val checkTask = authy.server.scheduler.runTaskLater(authy, Runnable {
             if(loginProcess.contains(player)) {

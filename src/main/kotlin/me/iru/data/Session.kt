@@ -17,18 +17,18 @@ class Session {
         playerData.update(authyPlayer)
     }
 
-    fun tryAutoLogin(p : Player) : Boolean {
-        val authyPlayer = playerData.get(p.uniqueId) ?: return false
+    fun tryAutoLogin(p : Player, authyPlayer: AuthyPlayer?, ) : Boolean {
+        authyPlayer ?: return false
+
         val now = Timestamp(System.currentTimeMillis()).time
         val hours = authy.config.getInt("sessionExpiresIn")
         val passes = if(hours > 500 || hours < 0) true
                      else authyPlayer.session + (hours * 3600000L) > now
         if(passes && p.address?.address?.hostAddress == authyPlayer.ip) {
-            authManager.login(p, LoginType.Session)
+            authManager.login(authyPlayer, p, LoginType.Session)
             return true
         }
 
         return false
     }
-
 }

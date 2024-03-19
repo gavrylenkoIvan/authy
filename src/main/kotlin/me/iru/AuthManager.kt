@@ -1,5 +1,6 @@
 package me.iru
 
+import me.iru.data.AuthyPlayer
 import org.bukkit.entity.Player
 
 enum class LoginType {
@@ -29,8 +30,9 @@ class AuthManager {
         effectRunner.runRegister(p)
     }
 
-    fun login(p: Player, type: LoginType = LoginType.Default) {
+    fun login(authyPlayer: AuthyPlayer, p: Player, type: LoginType = LoginType.Default) {
         loginProcess.removePlayer(p)
+
         when(type) {
             LoginType.Default -> {
                 p.sendMessage("${translations.getPrefix(PrefixType.LOGIN)} ${translations.get("login_success")}")
@@ -39,7 +41,6 @@ class AuthManager {
                         "${org.bukkit.ChatColor.YELLOW}logged in with ip ${org.bukkit.ChatColor.WHITE}${p.address?.address?.hostAddress} " +
                         "${org.bukkit.ChatColor.YELLOW}and UUID ${org.bukkit.ChatColor.WHITE}${p.uniqueId}"
                 )
-                val authyPlayer = playerData.get(p.uniqueId)!!
                 if(!authyPlayer.isPinEnabled && authy.config.getBoolean("sendPinSetReminder")) {
                     p.sendMessage("${translations.getPrefix(PrefixType.WARNING)} ${translations.get("no_pin_warning")}")
                 }

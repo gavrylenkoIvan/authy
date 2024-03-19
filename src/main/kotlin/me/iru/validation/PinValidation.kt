@@ -5,11 +5,8 @@ import me.iru.utils.HashUtil
 import java.util.*
 
 object PinValidation {
-    private val playerData = Authy.playerData
-
-    fun check(uuid: UUID, pin: String): Boolean {
-        val data = playerData.get(uuid)!!
-        return HashUtil.toSHA256(pin) == data.pin
+    fun check(raw: String, hashPin: String): Boolean {
+        return HashUtil.toSHA256(raw) == hashPin
     }
 
     fun matchesRules(pin: String): Boolean {

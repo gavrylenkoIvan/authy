@@ -5,12 +5,8 @@ import me.iru.utils.HashUtil
 import java.util.*
 
 object PasswordValidation {
-    private val playerData = Authy.playerData
-
-    fun check(uuid: UUID, password: String): Boolean {
-        val data = playerData.get(uuid)!!
-
-        return HashUtil.toSHA256(password) == data.password
+    fun check(raw: String, hash: String): Boolean {
+        return HashUtil.toSHA256(raw) == hash
     }
 
     fun matchesRules(pass: String): Boolean {

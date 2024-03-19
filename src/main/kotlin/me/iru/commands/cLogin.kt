@@ -20,7 +20,7 @@ class cLogin(override var name: String = "login") : ICommand {
         if(sender is Player) {
             val p : Player = sender
             val authyPlayer = playerData.get(p.uniqueId)
-            if(authyPlayer == null || !playerData.exists(p.uniqueId)) {
+            if(authyPlayer == null) {
                 p.sendMessage("${translations.getPrefix(PrefixType.ERROR)} ${translations.get("command_login_notregistered")}")
                 return true
             }
@@ -39,17 +39,17 @@ class cLogin(override var name: String = "login") : ICommand {
                     return true
                 }
             }
-            return if(!PasswordValidation.check(p.uniqueId, args[0])) {
+            return if(!PasswordValidation.check(args[0], authyPlayer.password)) {
                 p.sendMessage("${translations.getPrefix(PrefixType.ERROR)} ${translations.get("command_login_wrongpassword")}")
                 true
             } else {
                 if(authyPlayer.isPinEnabled) {
-                    if(!PinValidation.check(p.uniqueId, args[1])) {
+                    if(!PinValidation.check(args[1], authyPlayer.pin!!)) {
                         p.sendMessage("${translations.getPrefix(PrefixType.ERROR)} ${translations.get("command_login_wrongpin")}")
                         return true
                     }
                 }
-                authManager.login(p)
+                authManager.login(authyPlayer, p)
                 true
             }
 
