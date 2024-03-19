@@ -33,13 +33,11 @@ class cAuthy(override var name: String = "authy") : ICommand {
         } else if(args[0].lowercase() == "info") {
             if(sender.hasPermission("authy.info")) {
                 val registered = Authy.playerData.getAll().size
-                val dbtype = Authy.playerData.databaseConnection.type
                 val dpl = authy.config.getInt("duplicateIpProtection.protectionLevel")
 
                 sender.sendMessage("§8[§6Authy§8] &8&m----&r &7Info &8&m----&r §8[§6Authy§8]")
                 sender.sendMessage("")
                 sender.sendMessage("§8  - §7Registered Players§8: §6$registered")
-                sender.sendMessage("§8  - §7Database Type§8: §6$dbtype")
                 sender.sendMessage("§8  - §7Duplicate Protection Level§8: §6$dpl")
                 sender.sendMessage("")
                 sender.sendMessage("§8[§6Authy§8] &8&m----&r &7Info &8&m----&r §8[§6Authy§8]")

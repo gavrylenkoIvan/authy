@@ -19,6 +19,7 @@ object HashUtil {
         val hashbytes = digest.digest(
             s.toByteArray()
         )
+
         return bytesToHex(hashbytes)
     }
 }

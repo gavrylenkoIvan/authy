@@ -3,8 +3,7 @@ package me.iru
 import me.iru.commands.*
 import me.iru.data.PlayerData
 import me.iru.data.Session
-import me.iru.data.migration.DatabaseMigration
-import me.iru.data.migration.Migration
+import me.iru.data.migrations.Migration
 import me.iru.events.BlockEvents
 import me.iru.events.LoginEvents
 import me.iru.process.JoinProcess
@@ -12,12 +11,9 @@ import me.iru.process.LoginProcess
 import me.iru.utils.CommandFilter
 import me.iru.utils.isNewVersionAvailable
 import me.iru.utils.registerCommand
-import org.bstats.bukkit.Metrics
-import org.bstats.charts.SimplePie
 import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
-
 
 class Authy : JavaPlugin() {
     val version = this.description.version
@@ -50,7 +46,6 @@ class Authy : JavaPlugin() {
 
         playerData = PlayerData()
         Migration.updateSystem()
-        DatabaseMigration.tryMigrate()
 
         translations = Translations()
         loginProcess = LoginProcess()
@@ -91,27 +86,12 @@ class Authy : JavaPlugin() {
             }
         })
 
-        setupMetrics()
     }
 
     override fun onDisable() {
         if(initialized) {
-            DatabaseMigration.saveLastDatabaseType()
-            playerData.databaseConnection.shutdownConnections()
             initialized = false
         }
         server.consoleSender.sendMessage("$prefix ${ChatColor.RED}Disabled $version")
     }
-
-    private fun setupMetrics() {
-        val metrics = Metrics(this, 14475)
-
-        metrics.addCustomChart(SimplePie("db_type") {
-            playerData.databaseConnection.type.name
-        })
-        metrics.addCustomChart(SimplePie("lang") {
-            instance.config.getString("lang")
-        })
-    }
-
 }

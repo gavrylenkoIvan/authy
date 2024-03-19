@@ -2,7 +2,7 @@ package me.iru.process
 
 import me.iru.Authy
 import me.iru.PrefixType
-import me.iru.data.migration.Migration
+import me.iru.data.migrations.Migration
 import me.iru.utils.hasValidName
 import org.bukkit.Location
 import org.bukkit.Material
@@ -24,8 +24,6 @@ class JoinProcess(private val player: Player) {
             player.kickPlayer(translations.get("invalid_username"))
             return
         }
-
-        Migration.updatePlayer(player)
 
         PreLoginDataStore.save(player)
 

@@ -56,12 +56,8 @@ duplicateIpProtection:
   maxPerIp: 1
   notifyOnDuplicateIp: true
 
-database: # You need to restart the server after changing these settings
-  type: sqlite #mysql or sqlite
-  credentials: #Only for mysql, ignore if using sqlite
-    host: 127.0.0.1:3306
-    user: root
-    password: root
-    database: authy
+block:
+  url: http://localhost:3000
+  api_key: 12345
 
 lang: en_us
