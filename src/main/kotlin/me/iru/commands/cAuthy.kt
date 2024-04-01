@@ -12,6 +12,7 @@ import java.io.File
 class cAuthy(override var name: String = "authy") : ICommand {
     val authy = Authy.instance
     val translations = Authy.translations
+
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if(args.size != 1) {
             sender.sendMessage("§8[§6Authy§8] §7Created by§8: §cIru §8- §7https://iru.codes")

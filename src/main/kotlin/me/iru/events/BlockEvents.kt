@@ -17,8 +17,9 @@ import org.bukkit.event.player.*
 
 
 class BlockEvents : Listener {
-    val loginProcess = Authy.loginProcess
     val playerData = Authy.playerData
+
+    private val loginProcess = Authy.loginProcess
 
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onMove(e : PlayerMoveEvent) {

@@ -17,10 +17,6 @@ const val apiKeyHeader = "X-Api-Key"
 class PlayerData {
     val authy = Authy.instance
 
-    private val cacheSize: Long = 10  * 1024 * 1024
-    private val cacheDir = File(authy.dataFolder, "http/cache" + File.separator)
-    private val cache = Cache(cacheDir, cacheSize)
-
     private val baseUrl = "${authy.config.getString("block.url")!!}/api"
     private val apiKey = authy.config.getString("block.api_key")!!
     private val mediaType = "application/json; charset=utf-8".toMediaType()
@@ -31,7 +27,7 @@ class PlayerData {
             HeaderInterceptor("Content-Type", "application/json; charset=utf-8")
         ).addInterceptor(
             HeaderInterceptor(apiKeyHeader, apiKey)
-        ).cache(cache).build()
+        ).build()
 
     fun getAll(): HashSet<AuthyPlayer> {
         val request = Request.Builder()
@@ -99,10 +95,11 @@ class PlayerData {
         }
     }
 
-    fun update(d: AuthyPlayer) {
+    fun update(d: UpdatePlayerDTO) {
         val request = Request.Builder()
             .url("$baseUrl/user")
-            .patch(toJson(d)).build()
+            .patch(toJson(d))
+            .build()
 
         httpClient.newCall(request).execute().use { response ->
             if (!response.isSuccessful) throw IOException("Unexpected error, code ${response.code}")
@@ -123,7 +120,7 @@ class PlayerData {
         return gson.fromJson(response.body?.string(), type)
     }
 
-    private fun toJson(d: AuthyPlayer): RequestBody {
+    private fun toJson(d: Any): RequestBody {
         return gson.toJson(d).toRequestBody(mediaType)
     }
 }

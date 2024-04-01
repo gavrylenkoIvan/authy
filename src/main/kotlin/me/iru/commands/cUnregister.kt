@@ -3,7 +3,6 @@ package me.iru.commands
 import me.iru.Authy
 import me.iru.PrefixType
 import me.iru.interfaces.ICommand
-import me.iru.process.LoginProcess
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.command.Command
@@ -16,13 +15,15 @@ class cUnregister(override var name: String = "unregister") : ICommand {
     val authy = Authy.instance
     val translations = Authy.translations
     val playerData = Authy.playerData
-    val LoginProcess : LoginProcess = Authy.loginProcess
+
+    private val loginProcess = Authy.loginProcess
+
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if(sender is Player) {
             val p : Player = sender
             playerData.delete(p.uniqueId)
             p.sendMessage("${translations.getPrefix(PrefixType.UNREGISTER)} ${translations.get("unregister_success")}")
-            LoginProcess.EffectRunner.runUnregister(p)
+            loginProcess.effectRunner.runUnregister(p)
             authy.server.scheduler.runTaskLater(authy, Runnable {
                 p.kickPlayer("${translations.getPrefix(PrefixType.UNREGISTER)} ${translations.get("command_unregister_successkick")}")
             }, 40L)

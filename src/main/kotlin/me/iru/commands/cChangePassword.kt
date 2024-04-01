@@ -2,6 +2,7 @@ package me.iru.commands
 
 import me.iru.Authy
 import me.iru.PrefixType
+import me.iru.data.UpdatePlayerDTO
 import me.iru.interfaces.ICommand
 import me.iru.utils.HashUtil
 import me.iru.validation.PasswordValidation
@@ -23,7 +24,7 @@ class cChangePassword(override var name: String = "changepassword") : ICommand {
                 return true
             }
 
-            var user = playerData.get(p.uniqueId)!!
+            val user = playerData.get(p.uniqueId)!!
             if(!PasswordValidation.check(args[0], user.password)) {
                 p.sendMessage("${translations.getPrefix(PrefixType.ERROR)} ${translations.get("command_login_wrongpassword")}")
                 return true
@@ -46,9 +47,7 @@ class cChangePassword(override var name: String = "changepassword") : ICommand {
                 return true
             }
 
-            val authyPlayer = playerData.get(p.uniqueId)!!
-            authyPlayer.password = HashUtil.toSHA256(password)
-            playerData.update(authyPlayer)
+            playerData.update(UpdatePlayerDTO(p.uniqueId, password=password))
 
             p.sendMessage("${translations.getPrefix(PrefixType.REGISTER)} ${translations.get("command_changepassword_success")}")
         }

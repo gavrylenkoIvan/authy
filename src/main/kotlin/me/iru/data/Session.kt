@@ -8,13 +8,15 @@ import java.sql.Timestamp
 class Session {
     val authy = Authy.instance
     val playerData = Authy.playerData
-    val authManager = Authy.authManager
+
+    private val authManager = Authy.authManager
 
     fun remember(p : Player) {
-        val authyPlayer = playerData.get(p.uniqueId)!!
-        authyPlayer.session = Timestamp(System.currentTimeMillis()).time
-        authyPlayer.ip = p.address?.address?.hostAddress!!
-        playerData.update(authyPlayer)
+        playerData.update(UpdatePlayerDTO(
+            p.uniqueId,
+            session=Timestamp(System.currentTimeMillis()).time,
+            ip=p.address?.address?.hostAddress!!
+        ))
     }
 
     fun tryAutoLogin(p : Player, authyPlayer: AuthyPlayer?, ) : Boolean {

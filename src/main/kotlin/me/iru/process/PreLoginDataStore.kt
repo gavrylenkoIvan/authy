@@ -55,9 +55,9 @@ object PreLoginDataStore {
 
         if(es.isNullOrEmpty()) return
 
-        for(e in es) {
-            p.addPotionEffect(e)
-        }
+//        for(e in es) {
+//            p.addPotionEffect(e)
+//        }
 
         effects.remove(p.uniqueId)
     }

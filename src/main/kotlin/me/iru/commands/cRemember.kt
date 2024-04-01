@@ -9,13 +9,14 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 class cRemember(override var name: String = "remember") : ICommand {
-    val Session : Session = Session()
+    private val session = Session()
     val authy = Authy.instance
     val translations = Authy.translations
+
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if(sender is Player) {
             val p : Player = sender
-            Session.remember(p)
+            session.remember(p)
             val hours = authy.config.getInt("sessionExpiresIn")
             p.sendMessage("${translations.getPrefix(PrefixType.REMEMBER)} ${translations.get("command_remember_success").format(
                 if(hours > 500 || hours < 0) "∞" else hours

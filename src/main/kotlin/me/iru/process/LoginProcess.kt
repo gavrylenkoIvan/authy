@@ -13,7 +13,7 @@ import java.util.*
 class LoginProcess {
     val authy = Authy.instance
     val translations = Authy.translations
-    val EffectRunner = EffectRunner()
+    val effectRunner = EffectRunner()
     val playerData = Authy.playerData
 
     private val inProcess = HashSet<UUID>()

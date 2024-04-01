@@ -3,7 +3,6 @@ package me.iru.process
 import me.iru.Authy
 import me.iru.PrefixType
 import me.iru.data.AuthyPlayer
-import me.iru.data.migrations.Migration
 import me.iru.utils.hasValidName
 import org.bukkit.Location
 import org.bukkit.Material

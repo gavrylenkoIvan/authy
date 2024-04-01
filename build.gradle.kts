@@ -122,7 +122,7 @@ dependencies {
     compileOnly("org.apache.logging.log4j:log4j-api:2.20.0")
     compileOnly("org.apache.logging.log4j:log4j-core:2.20.0")
 
-    implementation("com.google.code.gson:gson:2.7")
+    implementation("com.google.code.gson:gson:2.9.1")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("org.spigotmc:spigot-api:${minecraftVersion}-R0.1-SNAPSHOT")
     implementation("org.bstats:bstats-bukkit:3.0.2")

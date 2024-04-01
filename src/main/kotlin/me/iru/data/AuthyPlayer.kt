@@ -1,11 +1,13 @@
 package me.iru.data
 
+import com.google.gson.annotations.SerializedName
 import java.util.*
 
 data class AuthyPlayer(val uuid: UUID,
                        var username: String,
                        var ip: String,
                        var password: String,
+                       @SerializedName("is_pin_enabled")
                        var isPinEnabled: Boolean = false,
                        var pin: String? = null,
                        var session: Long = 0L,
@@ -41,3 +43,11 @@ data class AuthyPlayer(val uuid: UUID,
         return result
     }
 }
+
+data class UpdatePlayerDTO(val uuid: UUID,
+                           var ip: String? = null,
+                           var password: String? = null,
+                           @SerializedName("is_pin_enabled")
+                           var isPinEnabled: Boolean? = null,
+                           var pin: String? = null,
+                           var session: Long? = null)

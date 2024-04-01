@@ -14,7 +14,7 @@ class AuthManager {
     private val translations = Authy.translations
     private val loginProcess = Authy.loginProcess
     private val playerData = Authy.playerData
-    private val effectRunner = Authy.loginProcess.EffectRunner
+    private val effectRunner = Authy.loginProcess.effectRunner
 
     fun register(p: Player, password: String, pin: String? = null) {
         playerData.create(p, password, pin)
@@ -60,5 +60,4 @@ class AuthManager {
             }
         }
     }
-
 }

@@ -1,8 +1,6 @@
 package me.iru.validation
 
-import me.iru.Authy
 import me.iru.utils.HashUtil
-import java.util.*
 
 object PasswordValidation {
     fun check(raw: String, hash: String): Boolean {

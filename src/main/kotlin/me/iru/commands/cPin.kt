@@ -2,6 +2,7 @@ package me.iru.commands
 
 import me.iru.Authy
 import me.iru.PrefixType
+import me.iru.data.UpdatePlayerDTO
 import me.iru.interfaces.ICommand
 import me.iru.utils.HashUtil
 import org.bukkit.command.Command
@@ -9,16 +10,14 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import me.iru.validation.PinValidation
 import me.iru.validation.getPinRule
-
-
+        
 class cPin(override var name: String = "pin") : ICommand {
     val authy = Authy.instance
     val translations = Authy.translations
     val playerData = Authy.playerData
 
-    private fun getStatusTranslated(p: Player): String {
-        val authyPlayer = playerData.get(p.uniqueId)!!
-        return if (authyPlayer.isPinEnabled) translations.get("enabled") else translations.get("disabled")
+    private fun getStatusTranslated(enabled: Boolean): String {
+        return if (enabled) translations.get("enabled") else translations.get("disabled")
     }
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
@@ -27,7 +26,7 @@ class cPin(override var name: String = "pin") : ICommand {
             val authyPlayer = playerData.get(p.uniqueId)!!
             if(args.isEmpty()) {
                 val pinColor = translations.getColor("prefix_pin_color")
-                val status = getStatusTranslated(p)
+                val status = getStatusTranslated(authyPlayer.isPinEnabled)
                 p.sendMessage(translations.get("pincommand_info_bar").format(pinColor, pinColor))
                 p.sendMessage("")
                 p.sendMessage(translations.get("pincommand_info_status").format(status))
@@ -47,9 +46,11 @@ class cPin(override var name: String = "pin") : ICommand {
                     p.sendMessage("${translations.getPrefix(PrefixType.ERROR)} ${translations.get("command_pin_required")}")
                     return true
                 }
-                authyPlayer.isPinEnabled = !authyPlayer.isPinEnabled
-                playerData.update(authyPlayer)
-                p.sendMessage("${translations.getPrefix(PrefixType.PIN)} ${translations.get("command_pin_toggled").format(getStatusTranslated(p))}")
+
+                playerData.update(UpdatePlayerDTO(p.uniqueId, isPinEnabled = !authyPlayer.isPinEnabled))
+                p.sendMessage("${translations.getPrefix(PrefixType.PIN)} ${translations.get("command_pin_toggled").format(
+                    getStatusTranslated(!authyPlayer.isPinEnabled)
+                )}")
             } else if(args[0].lowercase() == "set") {
                 if(args.size != 2) {
                     p.sendMessage("${translations.getPrefix(PrefixType.ERROR)} ${translations.get("command_pin_setusage")}")
@@ -60,8 +61,7 @@ class cPin(override var name: String = "pin") : ICommand {
                     p.sendMessage("${translations.getPrefix(PrefixType.ERROR)} ${translations.get("command_pin_breaksrules").format(rule.minLength, rule.maxLength)}")
                     return true
                 }
-                authyPlayer.pin = HashUtil.toSHA256(args[1])
-                playerData.update(authyPlayer)
+                playerData.update(UpdatePlayerDTO(p.uniqueId, pin = args[1]))
                 p.sendMessage("${translations.getPrefix(PrefixType.PIN)} ${translations.get("command_pin_success")}")
             }
         }

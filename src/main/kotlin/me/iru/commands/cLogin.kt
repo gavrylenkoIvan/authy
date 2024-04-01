@@ -8,6 +8,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import me.iru.validation.PasswordValidation
 import me.iru.validation.PinValidation
+import org.bukkit.Bukkit
 
 class cLogin(override var name: String = "login") : ICommand {
     val authy = Authy.instance
@@ -17,43 +18,47 @@ class cLogin(override var name: String = "login") : ICommand {
     val authManager = Authy.authManager
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        if(sender is Player) {
-            val p : Player = sender
-            val authyPlayer = playerData.get(p.uniqueId)
-            if(authyPlayer == null) {
-                p.sendMessage("${translations.getPrefix(PrefixType.ERROR)} ${translations.get("command_login_notregistered")}")
-                return true
-            }
-            if(!loginProcess.contains(p)) {
-                p.sendMessage("${translations.getPrefix(PrefixType.ERROR)} ${translations.get("already_authed")}")
-                return true
-            }
-            if(authyPlayer.isPinEnabled) {
-                if(args.size != 2) {
-                    p.sendMessage("${translations.getPrefix(PrefixType.ERROR)} ${translations.get("command_login_usagepin")}")
-                    return true
+        Bukkit.getScheduler().runTaskAsynchronously(authy, Runnable {
+            if(sender is Player) {
+                val p : Player = sender
+                val authyPlayer = playerData.get(p.uniqueId)
+                println(authyPlayer.toString())
+                if(authyPlayer == null) {
+                    p.sendMessage("${translations.getPrefix(PrefixType.ERROR)} ${translations.get("command_login_notregistered")}")
+                    return@Runnable
                 }
-            } else {
-                if(args.size != 1) {
-                    p.sendMessage("${translations.getPrefix(PrefixType.ERROR)} ${translations.get("command_login_usage")}")
-                    return true
+                if(!loginProcess.contains(p)) {
+                    p.sendMessage("${translations.getPrefix(PrefixType.ERROR)} ${translations.get("already_authed")}")
+                    return@Runnable
                 }
-            }
-            return if(!PasswordValidation.check(args[0], authyPlayer.password)) {
-                p.sendMessage("${translations.getPrefix(PrefixType.ERROR)} ${translations.get("command_login_wrongpassword")}")
-                true
-            } else {
                 if(authyPlayer.isPinEnabled) {
-                    if(!PinValidation.check(args[1], authyPlayer.pin!!)) {
-                        p.sendMessage("${translations.getPrefix(PrefixType.ERROR)} ${translations.get("command_login_wrongpin")}")
-                        return true
+                    if(args.size != 2) {
+                        p.sendMessage("${translations.getPrefix(PrefixType.ERROR)} ${translations.get("command_login_usagepin")}")
+                        return@Runnable
+                    }
+                } else {
+                    if(args.size != 1) {
+                        p.sendMessage("${translations.getPrefix(PrefixType.ERROR)} ${translations.get("command_login_usage")}")
+                        return@Runnable
                     }
                 }
-                authManager.login(authyPlayer, p)
-                true
-            }
 
-        }
+                if(!PasswordValidation.check(args[0], authyPlayer.password)) {
+                    p.sendMessage("${translations.getPrefix(PrefixType.ERROR)} ${translations.get("command_login_wrongpassword")}")
+                    return@Runnable
+                } else {
+                    if(authyPlayer.isPinEnabled) {
+                        if(!PinValidation.check(args[1], authyPlayer.pin!!)) {
+                            p.sendMessage("${translations.getPrefix(PrefixType.ERROR)} ${translations.get("command_login_wrongpin")}")
+                            return@Runnable
+                        }
+                    }
+                    authManager.login(authyPlayer, p)
+                }
+
+            }
+        })
+
         return true
     }
 }
