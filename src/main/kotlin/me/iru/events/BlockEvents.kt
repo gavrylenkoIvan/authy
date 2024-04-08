@@ -134,7 +134,7 @@ class BlockEvents : Listener {
         if(loginProcess.contains(e.player)) {
             if (!allowedCommands.contains(e.message.split(" ")[0])) {
                 e.isCancelled = true
-                loginProcess.sendPleaseAuthMessage(e.player, playerData.get(e.player.uniqueId))
+                loginProcess.sendPleaseAuthMessage(e.player, playerData.getUser(e.player.uniqueId).get())
             }
         }
     }
@@ -143,7 +143,7 @@ class BlockEvents : Listener {
     fun onChat(e : AsyncPlayerChatEvent)  {
         if(loginProcess.contains(e.player)) {
             e.isCancelled = true
-            loginProcess.sendPleaseAuthMessage(e.player, playerData.get(e.player.uniqueId))
+            loginProcess.sendPleaseAuthMessage(e.player, playerData.getUser(e.player.uniqueId).get())
         }
     }
 

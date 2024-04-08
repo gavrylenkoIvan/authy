@@ -1,9 +1,7 @@
 package me.iru
 
 import me.iru.commands.*
-import me.iru.data.PlayerData
 import me.iru.data.Session
-import me.iru.data.migrations.Migration
 import me.iru.events.BlockEvents
 import me.iru.events.LoginEvents
 import me.iru.process.JoinProcess
@@ -14,9 +12,11 @@ import me.iru.utils.registerCommand
 import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
+import org.havry.BlockClient
+import java.net.http.HttpClient
 
 class Authy : JavaPlugin() {
-    val version = this.description.version
+    val version: String = this.description.version
     var latestVersion = this.version
 
     private val pluginName = this.description.name
@@ -29,7 +29,7 @@ class Authy : JavaPlugin() {
     companion object {
         lateinit var instance: Authy private set
         lateinit var translations: Translations private set
-        lateinit var playerData: PlayerData private set
+        lateinit var playerData: BlockClient private set
         lateinit var loginProcess: LoginProcess private set
         lateinit var session: Session private set
         lateinit var authManager: AuthManager private set
@@ -44,8 +44,11 @@ class Authy : JavaPlugin() {
             return
         }
 
-        playerData = PlayerData()
-        Migration.updateSystem()
+        playerData = BlockClient(
+            HttpClient.newHttpClient(),
+            instance.config.getString("block.url")!!,
+            instance.config.getString("block.api_key")!!
+        )
 
         translations = Translations()
         loginProcess = LoginProcess()
@@ -75,23 +78,23 @@ class Authy : JavaPlugin() {
 
         val players = server.onlinePlayers
         for(player : Player in players) {
-            JoinProcess(player, playerData.get(player.uniqueId)).run()
+            JoinProcess(player, playerData.getUser(player.uniqueId).get()).run()
         }
 
         this.server.scheduler.runTaskAsynchronously(this, Runnable {
             val v = isNewVersionAvailable()
-            if(v.first) {
+            if (v.first) {
                 this.latestVersion = v.second
                 server.consoleSender.sendMessage("$prefix ${ChatColor.YELLOW}New version available - ${ChatColor.GREEN}${this.latestVersion}${ChatColor.YELLOW}!")
             }
         })
-
     }
 
     override fun onDisable() {
         if(initialized) {
             initialized = false
         }
+
         server.consoleSender.sendMessage("$prefix ${ChatColor.RED}Disabled $version")
     }
 }

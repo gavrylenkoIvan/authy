@@ -2,15 +2,14 @@ package me.iru.commands
 
 import me.iru.Authy
 import me.iru.PrefixType
-import me.iru.data.UpdatePlayerDTO
 import me.iru.interfaces.ICommand
-import me.iru.utils.HashUtil
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import me.iru.validation.PinValidation
 import me.iru.validation.getPinRule
-        
+import org.havry.entities.UpdateUserDTO
+
 class cPin(override var name: String = "pin") : ICommand {
     val authy = Authy.instance
     val translations = Authy.translations
@@ -23,7 +22,7 @@ class cPin(override var name: String = "pin") : ICommand {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if(sender is Player) {
             val p : Player = sender
-            val authyPlayer = playerData.get(p.uniqueId)!!
+            val authyPlayer = playerData.getUser(p.uniqueId).get()
             if(args.isEmpty()) {
                 val pinColor = translations.getColor("prefix_pin_color")
                 val status = getStatusTranslated(authyPlayer.isPinEnabled)
@@ -47,7 +46,7 @@ class cPin(override var name: String = "pin") : ICommand {
                     return true
                 }
 
-                playerData.update(UpdatePlayerDTO(p.uniqueId, isPinEnabled = !authyPlayer.isPinEnabled))
+                playerData.updateUser(UpdateUserDTO(p.uniqueId, isPinEnabled = !authyPlayer.isPinEnabled))
                 p.sendMessage("${translations.getPrefix(PrefixType.PIN)} ${translations.get("command_pin_toggled").format(
                     getStatusTranslated(!authyPlayer.isPinEnabled)
                 )}")
@@ -61,7 +60,7 @@ class cPin(override var name: String = "pin") : ICommand {
                     p.sendMessage("${translations.getPrefix(PrefixType.ERROR)} ${translations.get("command_pin_breaksrules").format(rule.minLength, rule.maxLength)}")
                     return true
                 }
-                playerData.update(UpdatePlayerDTO(p.uniqueId, pin = args[1]))
+                playerData.updateUser(UpdateUserDTO(p.uniqueId, pin = args[1]))
                 p.sendMessage("${translations.getPrefix(PrefixType.PIN)} ${translations.get("command_pin_success")}")
             }
         }

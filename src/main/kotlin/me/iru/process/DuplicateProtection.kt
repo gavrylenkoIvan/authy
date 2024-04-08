@@ -49,9 +49,6 @@ object DuplicateProtection {
             1 -> {
                 Authy.instance.server.onlinePlayers.filter { it.address?.address?.hostAddress == ip }.mapTo(duplicates) { it.name }
             }
-            2 -> {
-                playerData.getAll().filter { it.ip == ip }.mapTo(duplicates) { it.username }
-            }
             else -> {
                 duplicates
             }

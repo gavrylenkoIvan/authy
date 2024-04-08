@@ -2,7 +2,6 @@ package me.iru.process
 
 import me.iru.Authy
 import me.iru.PrefixType
-import me.iru.data.AuthyPlayer
 import me.iru.utils.hasValidName
 import org.bukkit.Location
 import org.bukkit.Material
@@ -11,9 +10,9 @@ import org.bukkit.entity.Player
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import org.bukkit.scheduler.BukkitTask
+import org.havry.entities.User
 
-class JoinProcess(private val player: Player, private val authyPlayer: AuthyPlayer?) {
-
+class JoinProcess(private val player: Player, private val authyPlayer: User?) {
     private val authy = Authy.instance
     private val loginProcess = Authy.loginProcess
     private val translations = Authy.translations

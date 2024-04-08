@@ -28,17 +28,15 @@ class cAuthy(override var name: String = "authy") : ICommand {
                 sender.sendMessage("§8[§6Authy§8] §7Reloaded §ctranslations§7!")
                 if (sender is Player) {
                     val p: Player = sender
-                    p.playSound(p.location, Sound.BLOCK_CHAIN_PLACE, 1F, 1F)
+                    p.playSound(p.location, Sound.BLOCK_METAL_PLACE, 1F, 1F)
                 }
             }
         } else if(args[0].lowercase() == "info") {
             if(sender.hasPermission("authy.info")) {
-                val registered = Authy.playerData.getAll().size
                 val dpl = authy.config.getInt("duplicateIpProtection.protectionLevel")
 
                 sender.sendMessage("§8[§6Authy§8] &8&m----&r &7Info &8&m----&r §8[§6Authy§8]")
                 sender.sendMessage("")
-                sender.sendMessage("§8  - §7Registered Players§8: §6$registered")
                 sender.sendMessage("§8  - §7Duplicate Protection Level§8: §6$dpl")
                 sender.sendMessage("")
                 sender.sendMessage("§8[§6Authy§8] &8&m----&r &7Info &8&m----&r §8[§6Authy§8]")

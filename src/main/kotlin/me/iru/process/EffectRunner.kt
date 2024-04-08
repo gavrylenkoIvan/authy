@@ -2,6 +2,7 @@ package me.iru.process
 
 import me.iru.Authy
 import me.iru.PrefixType
+import org.bukkit.Color
 import org.bukkit.*
 import org.bukkit.entity.Firework
 import org.bukkit.entity.Player

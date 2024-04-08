@@ -9,14 +9,13 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.*
 
 class LoginEvents : Listener {
-
-    val loginProcess = Authy.loginProcess
+    private val loginProcess = Authy.loginProcess
     val authy = Authy.instance
     val playerData = Authy.playerData
 
     @EventHandler(priority = EventPriority.LOWEST)
     fun onJoin(e : PlayerJoinEvent) {
-        JoinProcess(e.player, playerData.get(e.player.uniqueId)).run()
+        JoinProcess(e.player, playerData.getUser(e.player.uniqueId).get()).run()
     }
 
     @EventHandler(priority = EventPriority.LOWEST)

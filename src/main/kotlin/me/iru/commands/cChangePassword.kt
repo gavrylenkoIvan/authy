@@ -2,14 +2,13 @@ package me.iru.commands
 
 import me.iru.Authy
 import me.iru.PrefixType
-import me.iru.data.UpdatePlayerDTO
 import me.iru.interfaces.ICommand
-import me.iru.utils.HashUtil
 import me.iru.validation.PasswordValidation
 import me.iru.validation.getPasswordRule
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import org.havry.entities.UpdateUserDTO
 
 class cChangePassword(override var name: String = "changepassword") : ICommand {
 
@@ -24,7 +23,7 @@ class cChangePassword(override var name: String = "changepassword") : ICommand {
                 return true
             }
 
-            val user = playerData.get(p.uniqueId)!!
+            val user = playerData.getUser(p.uniqueId).get()
             if(!PasswordValidation.check(args[0], user.password)) {
                 p.sendMessage("${translations.getPrefix(PrefixType.ERROR)} ${translations.get("command_login_wrongpassword")}")
                 return true
@@ -47,7 +46,7 @@ class cChangePassword(override var name: String = "changepassword") : ICommand {
                 return true
             }
 
-            playerData.update(UpdatePlayerDTO(p.uniqueId, password=password))
+            playerData.updateUser(UpdateUserDTO(p.uniqueId, password=password))
 
             p.sendMessage("${translations.getPrefix(PrefixType.REGISTER)} ${translations.get("command_changepassword_success")}")
         }

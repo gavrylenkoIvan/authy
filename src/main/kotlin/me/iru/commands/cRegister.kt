@@ -44,7 +44,7 @@ class cRegister(override var name: String = "register") : ICommand {
                     val rule = getPinRule()
                     p.sendMessage("${translations.getPrefix(PrefixType.ERROR)} ${translations.get("command_pin_breaksrules").format(rule.minLength, rule.maxLength)}")
                 }
-                if(!playerData.exists(p.uniqueId)) {
+                if(playerData.getUser(p.uniqueId).get() == null) {
                     authManager.register(p, password, pin)
                 } else {
                     p.sendMessage("${translations.getPrefix(PrefixType.ERROR)} ${translations.get("command_register_alreadyregistered")}")

@@ -2,12 +2,12 @@ package me.iru.process
 
 import me.iru.Authy
 import me.iru.PrefixType
-import me.iru.data.AuthyPlayer
 import me.iru.utils.sendVersionDownload
 import me.iru.utils.sendWelcomeMessage
 import org.bukkit.entity.Player
 import org.bukkit.potion.PotionEffectType
 import org.bukkit.scheduler.BukkitTask
+import org.havry.entities.User
 import java.util.*
 
 class LoginProcess {
@@ -40,7 +40,7 @@ class LoginProcess {
         return inProcess.contains(e.uniqueId)
     }
 
-    fun sendPleaseAuthMessage(p: Player, user: AuthyPlayer?) {
+    fun sendPleaseAuthMessage(p: Player, user: User?) {
         if(user != null) {
             p.sendMessage(
                 "${translations.getPrefix(PrefixType.WARNING)} ${

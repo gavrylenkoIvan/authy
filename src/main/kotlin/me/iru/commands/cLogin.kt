@@ -21,8 +21,7 @@ class cLogin(override var name: String = "login") : ICommand {
         Bukkit.getScheduler().runTaskAsynchronously(authy, Runnable {
             if(sender is Player) {
                 val p : Player = sender
-                val authyPlayer = playerData.get(p.uniqueId)
-                println(authyPlayer.toString())
+                val authyPlayer = playerData.getUser(p.uniqueId).get()
                 if(authyPlayer == null) {
                     p.sendMessage("${translations.getPrefix(PrefixType.ERROR)} ${translations.get("command_login_notregistered")}")
                     return@Runnable

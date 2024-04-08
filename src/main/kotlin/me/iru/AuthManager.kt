@@ -1,7 +1,7 @@
 package me.iru
 
-import me.iru.data.AuthyPlayer
 import org.bukkit.entity.Player
+import org.havry.entities.User
 
 enum class LoginType {
     Default,
@@ -17,7 +17,14 @@ class AuthManager {
     private val effectRunner = Authy.loginProcess.effectRunner
 
     fun register(p: Player, password: String, pin: String? = null) {
-        playerData.create(p, password, pin)
+        playerData.createUser(User(
+            p.uniqueId,
+            p.name,
+            p.address?.address?.hostAddress!!,
+            password,
+            pin != null,
+            pin
+        ))
         loginProcess.removePlayer(p)
         p.sendMessage("${translations.getPrefix(PrefixType.REGISTER)} ${translations.get("register_success")}")
         authy.server.consoleSender.sendMessage(
@@ -30,7 +37,7 @@ class AuthManager {
         effectRunner.runRegister(p)
     }
 
-    fun login(authyPlayer: AuthyPlayer, p: Player, type: LoginType = LoginType.Default) {
+    fun login(authyPlayer: User, p: Player, type: LoginType = LoginType.Default) {
         loginProcess.removePlayer(p)
 
         when(type) {
